@@ -1,0 +1,1698 @@
+/* ============================================================================
+   DONBAS FRONTLINE // Battlefield-Grade Tactical Military Stylesheet
+   Zero external fonts/URLs. Zero emojis. Sharp 1px hairlines & gunmetal HUD.
+   ============================================================================ */
+
+:root {
+  --df-bg-panel: rgba(11, 15, 20, 0.78);
+  --df-bg-panel-solid: rgba(10, 14, 18, 0.92);
+  --df-bg-strip: rgba(12, 16, 22, 0.62);
+  --df-line: rgba(210, 224, 238, 0.16);
+  --df-line-strong: rgba(226, 236, 246, 0.34);
+  --df-text: #e6edf3;
+  --df-text-dim: #8c9ba8;
+  --df-text-muted: #586674;
+  --df-amber: #e8a838;
+  --df-amber-glow: rgba(232, 168, 56, 0.22);
+  --df-ua: #3b82f6;
+  --df-ua-gold: #38bdf8;
+  --df-ru: #e03e36;
+  --df-ru-olive: #b84a42;
+  --df-danger: #df4036;
+  --df-ok: #5db87a;
+  --df-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --df-font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0d11;
+  color: var(--df-text);
+  font-family: var(--df-font-sans);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+#game-root {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0d11;
+}
+
+#gl-canvas,
+#game-canvas,
+canvas.df-viewport {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#ui-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+}
+
+#ui-layer.df-hide-hud,
+#ui-layer.df-hide-hud * {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#df-ui-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+
+#df-ui-root.df-hud-hidden,
+#df-ui-root.df-hud-hidden * {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.df-hidden {
+  display: none !important;
+}
+
+.df-mono {
+  font-family: var(--df-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle tactical corner bracket accent */
+.df-bracket {
+  position: relative;
+  background: var(--df-bg-panel);
+  border: 1px solid var(--df-line);
+}
+.df-bracket::before,
+.df-bracket::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  pointer-events: none;
+}
+.df-bracket::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid var(--df-line-strong);
+  border-left: 1px solid var(--df-line-strong);
+}
+.df-bracket::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid var(--df-line-strong);
+  border-right: 1px solid var(--df-line-strong);
+}
+
+/* ============================================================================
+   1. PRE-BATTLE BRIEFING OVERLAY (Editorial AAA left rail + bottom-right keygrid)
+   ============================================================================ */
+#df-briefing {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 36px 22px;
+  background: linear-gradient(
+    90deg,
+    rgba(7, 10, 14, 0.86) 0%,
+    rgba(7, 10, 14, 0.62) 26%,
+    rgba(7, 10, 14, 0.14) 48%,
+    rgba(7, 10, 14, 0.0) 68%
+  );
+}
+
+.df-brief-panel {
+  width: 422px;
+  max-width: calc(100vw - 48px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(232, 168, 56, 0.28);
+}
+
+.df-brand-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  color: var(--df-amber);
+  text-transform: uppercase;
+}
+.df-brand-eyebrow-bar {
+  width: 18px;
+  height: 2px;
+  background: var(--df-amber);
+}
+
+.df-brand-title {
+  margin: 4px 0 0;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  line-height: 0.98;
+  color: #f4f7fb;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72);
+}
+.df-brand-title-thin {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  color: #b7c4d1;
+  margin-bottom: 3px;
+}
+
+.df-amber-rule {
+  display: flex;
+  align-items: center;
+  margin: 10px 0 6px;
+  height: 2px;
+}
+.df-amber-rule::before {
+  content: "";
+  width: 58px;
+  height: 2px;
+  background: var(--df-amber);
+  flex-shrink: 0;
+}
+.df-amber-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(232, 168, 56, 0.45), rgba(210, 224, 238, 0.08));
+}
+
+.df-brand-sub {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: #b0becb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.df-brand-sub span.df-sep {
+  color: var(--df-amber);
+}
+
+.df-section-label {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--df-text-dim);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Editorial Faction Selector */
+.df-factions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.df-faction-btn {
+  position: relative;
+  text-align: left;
+  padding: 10px 11px 9px;
+  background: rgba(11, 15, 20, 0.72);
+  border: 1px solid rgba(210, 224, 238, 0.14);
+  color: var(--df-text);
+  cursor: pointer;
+  transition: border-color 0.14s ease, background 0.14s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: inherit;
+}
+
+.df-faction-btn:hover {
+  background: rgba(18, 25, 34, 0.86);
+  border-color: var(--df-line-strong);
+}
+
+.df-faction-btn.df-ua {
+  border-left: 3px solid var(--df-ua);
+}
+.df-faction-btn.df-ua.active {
+  background: rgba(20, 36, 58, 0.78);
+  border-color: rgba(56, 189, 248, 0.88);
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.34);
+}
+
+.df-faction-btn.df-ru {
+  border-left: 3px solid var(--df-ru);
+}
+.df-faction-btn.df-ru.active {
+  background: rgba(50, 20, 19, 0.78);
+  border-color: rgba(200, 67, 54, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(200, 67, 54, 0.30);
+}
+
+.df-faction-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.df-faction-code {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.df-faction-btn.df-ua .df-faction-code { color: var(--df-ua-gold); }
+.df-faction-btn.df-ru .df-faction-code { color: #e26d60; }
+
+.df-faction-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 0.04em;
+}
+
+.df-faction-force {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-amber);
+}
+
+.df-faction-assets {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: #9fb0c0;
+  letter-spacing: 0.03em;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Compact Settings Block inside Briefing */
+.df-brief-config {
+  padding: 10px 12px;
+  background: rgba(10, 14, 19, 0.72);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.df-quality-seg {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.df-seg-btn {
+  padding: 5px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--df-line);
+  color: var(--df-text-dim);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.df-seg-btn:hover {
+  color: var(--df-text);
+  border-color: var(--df-line-strong);
+}
+.df-seg-btn.active {
+  background: rgba(232, 168, 56, 0.18);
+  border-color: var(--df-amber);
+  color: #fff2d6;
+}
+
+.df-slider-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 14px;
+}
+
+.df-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.df-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--df-text-dim);
+}
+.df-slider-label strong {
+  font-family: var(--df-font-mono);
+  color: var(--df-text);
+  font-weight: 600;
+}
+
+input[type="range"].df-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  background: rgba(210, 224, 238, 0.20);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"].df-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 12px;
+  background: var(--df-amber);
+  border: 1px solid #0b0f14;
+  cursor: pointer;
+}
+input[type="range"].df-range::-moz-range-thumb {
+  width: 10px;
+  height: 12px;
+  background: var(--df-amber);
+  border: 1px solid #0b0f14;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.df-deploy-btn {
+  width: 100%;
+  padding: 12px 18px;
+  background: var(--df-amber);
+  color: #0b0e12;
+  border: 1px solid #f7ca72;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.12s ease, transform 0.08s ease;
+}
+.df-deploy-btn:hover {
+  background: #f4b84b;
+}
+.df-deploy-btn:active {
+  transform: translateY(1px);
+}
+
+.df-brief-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.df-brief-stamp {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: rgba(182, 198, 214, 0.56);
+  padding-left: 14px;
+}
+
+/* Translucent Tactical Keybind Grid anchored Bottom-Right */
+.df-brief-keygrid {
+  padding: 10px 14px;
+  background: rgba(9, 13, 18, 0.62);
+  border: 1px solid rgba(210, 224, 238, 0.14);
+  border-top: 2px solid rgba(232, 168, 56, 0.65);
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 6px 18px;
+  font-size: 11px;
+  color: #c2cfd9;
+}
+.df-kg-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.df-kg-item b {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #f3f6fa;
+  min-width: 28px;
+  text-align: center;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(210, 224, 238, 0.24);
+}
+
+/* ============================================================================
+   2. IN-GAME HUD LAYOUT
+   ============================================================================ */
+#df-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* 3D World-to-Screen Overhead Battlefield IFF Marker Layer */
+#df-iff-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Low-HP / Damage vignette */
+#df-lowhp-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  background: radial-gradient(circle at center, transparent 54%, rgba(185, 24, 24, 0.56) 100%);
+}
+
+/* Persistent Top-Left Live Tactical Minimap */
+#df-minimap-wrap {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  z-index: 8;
+  width: 188px;
+  background: rgba(10, 14, 19, 0.80);
+  border: 1px solid rgba(210, 224, 238, 0.22);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+#df-minimap-wrap::before,
+#df-minimap-wrap::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  pointer-events: none;
+  z-index: 2;
+}
+#df-minimap-wrap::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid var(--df-amber);
+  border-left: 1px solid var(--df-amber);
+}
+#df-minimap-wrap::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid var(--df-line-strong);
+  border-right: 1px solid var(--df-line-strong);
+}
+
+.df-minimap-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px;
+  border-bottom: 1px solid rgba(210, 224, 238, 0.12);
+  font-family: var(--df-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  color: var(--df-text-dim);
+  background: rgba(8, 12, 16, 0.65);
+}
+.df-minimap-head b {
+  color: var(--df-amber);
+  font-weight: 700;
+}
+
+#df-minimap {
+  width: 186px;
+  height: 170px;
+  display: block;
+  background: #0b1015;
+}
+
+.df-minimap-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px;
+  border-top: 1px solid rgba(210, 224, 238, 0.12);
+  font-family: var(--df-font-mono);
+  font-size: 9px;
+  color: var(--df-text-dim);
+  background: rgba(8, 12, 16, 0.72);
+}
+.df-minimap-foot strong {
+  color: #dce6f0;
+  font-weight: 700;
+}
+
+/* Top-Center Compass & Breakthrough Bar */
+.df-top-center {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.df-compass-wrap {
+  position: relative;
+  width: 390px;
+  height: 30px;
+  background: linear-gradient(90deg, transparent 0%, rgba(10, 14, 19, 0.62) 16%, rgba(10, 14, 19, 0.62) 84%, transparent 100%);
+  border-bottom: 1px solid rgba(210, 224, 238, 0.18);
+}
+#df-compass-canvas {
+  width: 390px;
+  height: 30px;
+  display: block;
+}
+.df-compass-bearing {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--df-amber);
+  background: rgba(10, 14, 19, 0.85);
+  border: 1px solid rgba(232, 168, 56, 0.35);
+  padding: 0 5px;
+  line-height: 14px;
+}
+
+.df-breakthrough {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px;
+  background: rgba(10, 14, 19, 0.68);
+  border: 1px solid var(--df-line);
+}
+
+.df-force-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--df-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.df-force-pill.ua { color: #7db4ff; }
+.df-force-pill.ru { color: #ef7467; }
+.df-force-dot {
+  width: 7px;
+  height: 7px;
+}
+.df-force-pill.ua .df-force-dot { background: var(--df-ua); border: 1px solid var(--df-ua-gold); }
+.df-force-pill.ru .df-force-dot { background: var(--df-ru); border: 1px solid #f0958a; }
+.df-tickets-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--df-text-dim);
+  padding: 0 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(210, 224, 238, 0.14);
+}
+.df-tickets-tag.low {
+  color: #ff7a70;
+  border-color: rgba(223, 64, 54, 0.55);
+}
+
+.df-sectors-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.df-sector-node {
+  position: relative;
+  width: 30px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--df-font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  border: 1px solid var(--df-line);
+  background: rgba(16, 22, 28, 0.85);
+  overflow: hidden;
+  color: #dce6f0;
+}
+.df-sector-node.owner-ua {
+  border-color: rgba(59, 130, 246, 0.7);
+}
+.df-sector-node.owner-ru {
+  border-color: rgba(200, 67, 54, 0.7);
+}
+.df-sector-node.active {
+  border-color: var(--df-amber);
+  box-shadow: 0 0 0 1px rgba(232, 168, 56, 0.35);
+}
+.df-sector-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0%;
+  transition: height 0.18s linear;
+  z-index: 0;
+}
+.df-sector-node.owner-ua .df-sector-fill { background: rgba(59, 130, 246, 0.42); }
+.df-sector-node.owner-ru .df-sector-fill { background: rgba(200, 67, 54, 0.48); }
+.df-sector-node.contested .df-sector-fill { background: rgba(232, 168, 56, 0.48); }
+.df-sector-label {
+  position: relative;
+  z-index: 1;
+}
+.df-sector-link {
+  width: 12px;
+  height: 1px;
+  background: var(--df-line-strong);
+}
+
+.df-match-timer {
+  font-family: var(--df-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--df-text);
+  padding: 0 6px;
+  border-left: 1px solid var(--df-line);
+  border-right: 1px solid var(--df-line);
+}
+
+/* Top-Right Killfeed & Radio Toast */
+.df-top-right {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 310px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.df-killfeed {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+}
+
+.df-kf-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(10, 14, 19, 0.68);
+  border-right: 2px solid var(--df-line-strong);
+  font-size: 11px;
+  white-space: nowrap;
+  transition: opacity 0.4s ease;
+}
+.df-kf-row.kf-ally { border-right-color: #38bdf8; }
+.df-kf-row.kf-enemy { border-right-color: #ff3b30; }
+.df-kf-name-ally { color: #5cc8ff; font-weight: 600; }
+.df-kf-name-enemy { color: #ff6b63; font-weight: 600; }
+.df-kf-wpn {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-text-dim);
+  padding: 0 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+.df-kf-hs {
+  display: inline-flex;
+  align-items: center;
+  color: var(--df-amber);
+}
+
+#df-radio-toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(12, 16, 22, 0.86);
+  border: 1px solid var(--df-line);
+  border-left: 2px solid var(--df-amber);
+  font-size: 12px;
+  color: #f0f4f8;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+#df-radio-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+#df-radio-toast.tone-danger { border-left-color: var(--df-danger); }
+#df-radio-toast.tone-success { border-left-color: var(--df-ok); }
+.df-radio-tag {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--df-amber);
+  letter-spacing: 0.1em;
+}
+
+/* ============================================================================
+   3. CENTER CROSSHAIR, HITMARKER, DAMAGE ARC & OPTICAL / THERMAL OVERLAYS
+   ============================================================================ */
+.df-center-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#df-crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transition: opacity 0.1s ease;
+}
+.df-ch-tick {
+  position: absolute;
+  background: rgba(242, 248, 255, 0.92);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.95);
+  transition: background-color 0.08s ease;
+}
+.df-ch-top    { width: 2px; height: 9px; left: -1px; bottom: 7px; }
+.df-ch-bottom { width: 2px; height: 9px; left: -1px; top: 7px; }
+.df-ch-left   { width: 9px; height: 2px; top: -1px; right: 7px; }
+.df-ch-right  { width: 9px; height: 2px; top: -1px; left: 7px; }
+.df-ch-dot {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  left: -1px;
+  top: -1px;
+  background: rgba(242, 248, 255, 0.9);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.95);
+  transition: background-color 0.08s ease;
+}
+#df-crosshair.iff-ally .df-ch-tick,
+#df-crosshair.iff-ally .df-ch-dot {
+  background: #38bdf8;
+  box-shadow: 0 0 4px rgba(56, 189, 248, 0.55), 0 0 2px rgba(0, 0, 0, 0.95);
+}
+#df-crosshair.iff-enemy .df-ch-tick,
+#df-crosshair.iff-enemy .df-ch-dot {
+  background: #ff3b30;
+  box-shadow: 0 0 4px rgba(255, 59, 48, 0.60), 0 0 2px rgba(0, 0, 0, 0.95);
+}
+
+#df-hitmarker {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  margin-top: -22px;
+  color: #f4f8fc;
+  opacity: 0;
+  transform: scale(0.84);
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.96));
+  transition: opacity 0.09s ease, transform 0.07s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#df-hitmarker.show {
+  opacity: 1;
+  transform: scale(1);
+}
+#df-hitmarker.kill {
+  color: #ff3b30;
+  transform: scale(1.22);
+  filter: drop-shadow(0 0 4px rgba(255, 59, 48, 0.65)) drop-shadow(0 0 1px rgba(0, 0, 0, 1));
+}
+#df-hitmarker.headshot {
+  color: #f5c542;
+  transform: scale(1.14);
+  filter: drop-shadow(0 0 4px rgba(245, 197, 66, 0.55)) drop-shadow(0 0 1px rgba(0, 0, 0, 1));
+}
+#df-hitmarker.armor {
+  color: #7cc4ff;
+  transform: scale(1.12);
+}
+#df-hitmarker .df-hm-outer,
+#df-hitmarker .df-hm-armor {
+  opacity: 0;
+}
+#df-hitmarker.headshot .df-hm-outer,
+#df-hitmarker.kill .df-hm-outer {
+  opacity: 1;
+}
+#df-hitmarker.armor .df-hm-armor {
+  opacity: 1;
+}
+
+.df-scope-glow {
+  filter: drop-shadow(0 0 3px rgba(255, 76, 36, 0.72)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.95));
+}
+.df-scope-crisp {
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9));
+}
+
+#df-damage-arc {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 210px;
+  height: 210px;
+  margin-left: -105px;
+  margin-top: -105px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Scope & Thermal Overlays */
+.df-optic-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.df-scope-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.df-thermal-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.df-fcs-readout {
+  position: absolute;
+  font-family: var(--df-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.df-fcs-tl { top: 222px; left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.df-fcs-tr { bottom: 156px; right: 18px; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+.df-fcs-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  background: rgba(10, 14, 18, 0.72);
+  border: 1px solid currentColor;
+  font-size: 11px;
+}
+
+/* Tank Hull vs Turret Orientation Widget */
+.df-armor-diag {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+  background: rgba(10, 14, 19, 0.76);
+  border: 1px solid var(--df-line);
+}
+
+.df-armor-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 170px;
+}
+.df-armor-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--df-font-mono);
+  font-size: 11px;
+}
+.df-bar-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.df-bar-fill {
+  height: 100%;
+  background: var(--df-amber);
+  transition: width 0.08s linear;
+}
+.df-bar-fill.hp { background: #63c782; }
+.df-bar-fill.hp.low { background: var(--df-danger); }
+.df-bar-fill.reload { background: var(--df-amber); }
+
+/* Drone & Dog Telemetry Bar */
+.df-uav-prompt {
+  position: absolute;
+  bottom: 92px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(10, 14, 19, 0.82);
+  border: 1px solid rgba(232, 168, 56, 0.55);
+  font-family: var(--df-font-mono);
+  font-size: 11px;
+  color: #f6e4bc;
+}
+
+/* Center-Bottom Interact Prompt */
+#df-interact-prompt {
+  position: absolute;
+  bottom: 164px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  background: rgba(10, 14, 19, 0.84);
+  border: 1px solid var(--df-amber);
+  color: #f4f7fa;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.df-interact-bar {
+  width: 140px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.df-interact-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--df-amber);
+}
+
+/* ============================================================================
+   4. BOTTOM-LEFT SQUAD STATUS & PLAYER VITALS
+   ============================================================================ */
+.df-bottom-left {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  width: 248px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.df-squad-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.df-sq-row {
+  display: grid;
+  grid-template-columns: 16px 1fr 48px 42px;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 7px;
+  background: rgba(10, 14, 19, 0.64);
+  border-left: 2px solid var(--df-line-strong);
+  font-size: 11px;
+}
+.df-sq-row.friendly { border-left-color: #38bdf8; }
+.df-sq-row.ua { border-left-color: #38bdf8; }
+.df-sq-row.ru { border-left-color: #38bdf8; }
+.df-sq-row.is-player { background: rgba(24, 34, 46, 0.78); border-left-color: var(--df-amber); }
+.df-sq-row.downed { border-left-color: #ff3b30; background: rgba(58, 18, 18, 0.72); }
+.df-sq-row.dead { opacity: 0.42; }
+
+.df-sq-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #dbe4ed;
+  font-weight: 500;
+}
+.df-sq-hp-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.df-sq-hp-fill {
+  height: 100%;
+  background: #67c485;
+}
+.df-sq-row.downed .df-sq-hp-fill { background: var(--df-danger); }
+.df-sq-tag {
+  font-family: var(--df-font-mono);
+  font-size: 9px;
+  text-align: right;
+  color: var(--df-text-dim);
+  letter-spacing: 0.04em;
+}
+.df-sq-row.downed .df-sq-tag { color: #ff7a70; font-weight: 700; }
+
+.df-vitals-box {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.df-vitals-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.df-hp-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.df-hp-num {
+  font-family: var(--df-font-mono);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  color: #eef4fa;
+}
+.df-hp-num.low { color: #ff5b52; }
+.df-hp-label {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-text-dim);
+  letter-spacing: 0.12em;
+}
+.df-stance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-text-dim);
+}
+.df-order-pill {
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-amber);
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 4px;
+}
+
+/* ============================================================================
+   5. BOTTOM-RIGHT WEAPON & HOTKEY RIBBON
+   ============================================================================ */
+.df-bottom-right {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+}
+
+.df-weapon-box {
+  min-width: 248px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.df-wpn-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.df-wpn-svg {
+  width: 112px;
+  height: 30px;
+  color: #dce6f0;
+  flex-shrink: 0;
+}
+
+.df-ammo-block {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--df-font-mono);
+}
+.df-ammo-mag {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  color: #f2f6fa;
+}
+.df-ammo-mag.low { color: var(--df-amber); }
+.df-ammo-mag.empty { color: var(--df-danger); }
+.df-ammo-slash { color: var(--df-text-muted); font-size: 16px; }
+.df-ammo-res { font-size: 15px; font-weight: 600; color: var(--df-text-dim); }
+
+.df-wpn-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-text-dim);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 4px;
+}
+.df-wpn-name { color: var(--df-text); font-weight: 700; letter-spacing: 0.05em; }
+.df-firemode-pill {
+  padding: 1px 5px;
+  border: 1px solid var(--df-line-strong);
+  color: var(--df-amber);
+  font-weight: 700;
+}
+
+.df-reload-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-amber);
+}
+.df-reload-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.df-reload-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--df-amber);
+}
+
+/* Minimal Hotkey Ribbon */
+.df-hotkey-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.df-hk-slot {
+  height: 24px;
+  min-width: 28px;
+  padding: 0 5px;
+  background: rgba(10, 14, 19, 0.68);
+  border: 1px solid var(--df-line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  color: var(--df-text-dim);
+}
+.df-hk-slot b {
+  color: #dce6f0;
+  font-weight: 700;
+}
+.df-hk-slot.active {
+  border-color: var(--df-amber);
+  background: rgba(232, 168, 56, 0.18);
+  color: #fff2d6;
+}
+.df-hk-slot.active b {
+  color: var(--df-amber);
+}
+.df-hk-slot.cooldown {
+  opacity: 0.48;
+}
+.df-hk-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--df-line-strong);
+  margin: 0 2px;
+}
+
+/* ============================================================================
+   6. RADIAL TACTICAL COMMAND WHEEL (HOLD Q)
+   ============================================================================ */
+#df-radial {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 9, 13, 0.24);
+}
+
+.df-radial-wrap {
+  position: relative;
+  width: 340px;
+  height: 340px;
+}
+
+.df-radial-svg {
+  width: 340px;
+  height: 340px;
+  display: block;
+}
+
+.df-wedge {
+  fill: rgba(11, 15, 21, 0.84);
+  stroke: rgba(210, 224, 238, 0.24);
+  stroke-width: 1.2;
+  cursor: pointer;
+  transition: fill 0.08s ease, stroke 0.08s ease;
+}
+.df-wedge.hovered {
+  fill: rgba(232, 168, 56, 0.28);
+  stroke: var(--df-amber);
+  stroke-width: 2;
+}
+
+.df-radial-label {
+  pointer-events: none;
+  fill: #e6edf3;
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.df-radial-sub {
+  pointer-events: none;
+  fill: var(--df-amber);
+  font-family: var(--df-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.df-radial-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  background: rgba(10, 14, 19, 0.94);
+  border: 1px solid var(--df-line-strong);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  padding: 6px;
+}
+.df-radial-hub-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--df-amber);
+}
+.df-radial-hub-hint {
+  font-family: var(--df-font-mono);
+  font-size: 9px;
+  color: var(--df-text-dim);
+  margin-top: 2px;
+}
+
+/* ============================================================================
+   7. LIVE INTERACTIVE TACTICAL MAP (M KEY)
+   ============================================================================ */
+#df-map-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 10, 14, 0.78);
+}
+
+.df-map-frame {
+  width: 820px;
+  max-width: calc(100vw - 40px);
+  padding: 12px 14px;
+  background: rgba(10, 14, 19, 0.94);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.df-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--df-line);
+  padding-bottom: 8px;
+}
+.df-map-title {
+  font-family: var(--df-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--df-amber);
+}
+.df-map-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--df-text-dim);
+}
+.df-leg-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+#df-map-canvas {
+  width: 100%;
+  height: 472px;
+  display: block;
+  background: #0c1116;
+  border: 1px solid var(--df-line-strong);
+  cursor: crosshair;
+}
+
+.df-map-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.df-map-orders {
+  display: flex;
+  gap: 5px;
+}
+
+.df-btn-sm {
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--df-line);
+  color: var(--df-text-dim);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.df-btn-sm:hover {
+  border-color: var(--df-line-strong);
+  color: var(--df-text);
+}
+.df-btn-sm.active {
+  border-color: var(--df-amber);
+  background: rgba(232, 168, 56, 0.20);
+  color: #fff2d6;
+}
+
+/* ============================================================================
+   8. DOWNED / REVIVE / ALLY TAKEOVER OVERLAY
+   ============================================================================ */
+#df-downed {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 58px;
+  background: radial-gradient(circle at center, rgba(40, 8, 8, 0.12) 45%, rgba(120, 14, 14, 0.52) 100%);
+}
+
+.df-downed-card {
+  pointer-events: auto;
+  min-width: 390px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-top: 2px solid var(--df-danger);
+}
+
+.df-bleed-ring {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.df-downed-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.df-downed-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  color: #ff6e64;
+}
+.df-downed-medic {
+  font-family: var(--df-font-mono);
+  font-size: 11px;
+  color: #d6e2ed;
+}
+
+.df-downed-actions {
+  margin-top: 5px;
+  display: flex;
+  gap: 8px;
+}
+
+.df-takeover-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--df-amber);
+  color: #0b0e12;
+  border: 1px solid #f7ca72;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.df-takeover-btn:hover { background: #f4b84b; }
+.df-takeover-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.df-respawn-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #eef4fa;
+  border: 1px solid rgba(226, 236, 246, 0.36);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.df-respawn-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--df-amber);
+}
+.df-respawn-btn.primary {
+  background: var(--df-amber);
+  color: #0b0e12;
+  border-color: #f7ca72;
+}
+.df-respawn-btn.primary:hover { background: #f4b84b; }
+
+/* ============================================================================
+   9. PAUSE / SETTINGS & END-OF-MATCH OVERLAYS
+   ============================================================================ */
+#df-pause,
+#df-endscreen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 10, 14, 0.76);
+}
+
+.df-modal-box {
+  width: 520px;
+  max-width: calc(100vw - 40px);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.df-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--df-line);
+  padding-bottom: 10px;
+}
+.df-modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.df-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.df-btn {
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--df-line-strong);
+  color: var(--df-text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.df-btn:hover { background: rgba(255, 255, 255, 0.11); }
+.df-btn.primary {
+  background: var(--df-amber);
+  border-color: #f7ca72;
+  color: #0b0e12;
+}
+.df-btn.primary:hover { background: #f4b84b; }
+
+.df-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--df-line);
+  font-size: 11px;
+  color: var(--df-text-dim);
+}
+.df-controls-grid div {
+  display: flex;
+  justify-content: space-between;
+}
+.df-controls-grid span {
+  font-family: var(--df-font-mono);
+  color: var(--df-text);
+}
+
+.df-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--df-text-dim);
+}
+
+/* End Screen Stats */
+.df-end-banner {
+  border-left: 3px solid var(--df-amber);
+  padding-left: 12px;
+}
+.df-end-banner.victory { border-left-color: var(--df-ok); }
+.df-end-banner.defeat { border-left-color: var(--df-danger); }
+.df-end-verdict {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.df-end-banner.victory .df-end-verdict { color: #7ce09b; }
+.df-end-banner.defeat .df-end-verdict { color: #ff6e64; }
+.df-end-reason {
+  font-size: 12px;
+  color: var(--df-text-dim);
+  margin-top: 2px;
+}
+
+.df-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.df-stat-cell {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--df-line);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.df-stat-val {
+  font-family: var(--df-font-mono);
+  font-size: 20px;
+  font-weight: 800;
+  color: #f0f5fa;
+}
+.df-stat-lbl {
+  font-size: 10px;
+  color: var(--df-text-dim);
+  letter-spacing: 0.06em;
+}
